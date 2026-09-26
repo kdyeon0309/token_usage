@@ -5,6 +5,8 @@ import Foundation
 final class UsageStore: ObservableObject {
     @Published private(set) var snapshots: [UsageProviderID: UsageSnapshot] = [:]
     @Published private(set) var errors: [UsageProviderID: String] = [:]
+    @Published private(set) var advice: [UsageProviderID: ProviderUsageAdvice] = [:]
+    @Published private(set) var recommendation: UsageRecommendation?
     @Published private(set) var isRefreshing = false
     @Published private(set) var isInstallingClaudeBridge = false
     @Published private(set) var setupMessage: String?
@@ -12,10 +14,19 @@ final class UsageStore: ObservableObject {
     private let providers: [any UsageProvider]
     private var refreshTask: Task<Void, Never>?
     private let refreshInterval: Duration
+    private let historyStore: UsageHistoryStore
+    private let now: @Sendable () -> Date
 
-    init(providers: [any UsageProvider], refreshInterval: Duration = .seconds(60)) {
+    init(
+        providers: [any UsageProvider],
+        refreshInterval: Duration = .seconds(60),
+        historyStore: UsageHistoryStore = UsageHistoryStore(),
+        now: @escaping @Sendable () -> Date = { .now }
+    ) {
         self.providers = providers
         self.refreshInterval = refreshInterval
+        self.historyStore = historyStore
+        self.now = now
     }
 
     deinit {
@@ -88,6 +99,19 @@ final class UsageStore: ObservableObject {
                 }
             }
         }
+
+        await updateAdvice()
+    }
+
+    private func updateAdvice() async {
+        let currentDate = now()
+        let history = (try? await historyStore.record(Array(snapshots.values), at: currentDate)) ?? []
+        advice = UsageAdvisor.makeAdvice(
+            snapshots: snapshots,
+            history: history,
+            now: currentDate
+        )
+        recommendation = UsageAdvisor.recommendation(snapshots: snapshots, advice: advice)
     }
 
     func quit() {
