@@ -11,6 +11,14 @@ xcodebuild -project TokenBar.xcodeproj -scheme TokenBar -configuration Debug bui
 
 macOS 13 이상이 필요합니다.
 
+Release 앱을 사용자 Applications 폴더에 설치하려면 다음 명령을 실행합니다. 기존
+TokenBar 앱은 타임스탬프가 붙은 이름으로 백업됩니다.
+
+```bash
+zsh scripts/install_app.sh
+open ~/Applications/TokenBar.app
+```
+
 ## Claude Code 연결
 
 Claude Code가 공식 Status Line 입력으로 전달하는 5시간/주간 한도를 로컬 파일에
