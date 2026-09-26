@@ -13,7 +13,7 @@ struct ProviderCardView: View {
                 Text(provider.displayName)
                     .font(.headline)
                 Spacer()
-                freshness
+                connectionBadge
             }
 
             if let snapshot {
@@ -24,6 +24,13 @@ struct ProviderCardView: View {
                     UsageProgressRow(title: "주간", window: window)
                 }
                 details(snapshot)
+                if let error {
+                    Label(error, systemImage: "exclamationmark.triangle.fill")
+                        .font(.caption2)
+                        .foregroundStyle(.red)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                sourceDetails(snapshot)
             } else {
                 unavailable
             }
@@ -36,13 +43,40 @@ struct ProviderCardView: View {
         }
     }
 
-    @ViewBuilder
-    private var freshness: some View {
-        if let snapshot {
-            Text(snapshot.updatedAt, style: .relative)
-                .font(.caption2)
-                .foregroundStyle(snapshot.isStale() ? .orange : .secondary)
+    private var connectionBadge: some View {
+        let status: (title: String, color: Color) = {
+            if error != nil {
+                return (snapshot == nil ? "연결 필요" : "갱신 실패", .red)
+            }
+            guard let snapshot else { return ("대기 중", .secondary) }
+            return snapshot.isStale() ? ("데이터 지연", .orange) : ("연결됨", .green)
+        }()
+
+        return HStack(spacing: 4) {
+            Circle()
+                .fill(status.color)
+                .frame(width: 6, height: 6)
+            Text(status.title)
         }
+        .font(.caption2.weight(.medium))
+        .foregroundStyle(status.color)
+        .padding(.horizontal, 7)
+        .padding(.vertical, 3)
+        .background(status.color.opacity(0.1), in: Capsule())
+    }
+
+    private func sourceDetails(_ snapshot: UsageSnapshot) -> some View {
+        HStack(spacing: 5) {
+            Image(systemName: "externaldrive.badge.checkmark")
+            Text(snapshot.sourceDescription)
+                .lineLimit(1)
+            Spacer(minLength: 4)
+            Text(snapshot.updatedAt.formatted(date: .omitted, time: .shortened))
+                .monospacedDigit()
+            Text("수집")
+        }
+        .font(.caption2)
+        .foregroundStyle(snapshot.isStale() ? .orange : .secondary)
     }
 
     private var unavailable: some View {
@@ -115,4 +149,3 @@ private struct UsageProgressRow: View {
         }
     }
 }
-
