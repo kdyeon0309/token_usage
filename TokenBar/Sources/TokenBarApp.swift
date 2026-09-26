@@ -2,7 +2,9 @@ import SwiftUI
 
 @main
 struct TokenBarApp: App {
-    @StateObject private var store = UsageStore(providers: [])
+    @StateObject private var store = UsageStore(
+        providers: [ClaudeUsageProvider()]
+    )
 
     var body: some Scene {
         MenuBarExtra {
@@ -17,4 +19,3 @@ struct TokenBarApp: App {
         .menuBarExtraStyle(.window)
     }
 }
-

@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		041953EBEE2A877AA9F4DAE0 /* UsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C27DA500FB4C196D1ABADD7 /* UsageProvider.swift */; };
+		292A573A689EF6F1121CF0EC /* ClaudeUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FDCB066AF2BCE7E6DB04F0F /* ClaudeUsageProvider.swift */; };
+		58AAB6413121E3438BD65A85 /* ClaudeUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398651AD2AC5ED7AFF31C06D /* ClaudeUsageProviderTests.swift */; };
 		628883B66BCCBA718912C560 /* MenuBarContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C23214559A0026828863BCC /* MenuBarContentView.swift */; };
 		7AD4F25EB31CDF16D3BFBB3A /* TokenBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04CC43735E1B18053CB68912 /* TokenBarApp.swift */; };
 		80CBE847505058E79D8BE108 /* UsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B706FF89B22E5BF0B0A13B12 /* UsageSnapshot.swift */; };
@@ -29,6 +31,8 @@
 /* Begin PBXFileReference section */
 		04CC43735E1B18053CB68912 /* TokenBarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenBarApp.swift; sourceTree = "<group>"; };
 		220F509A1DCAA52AFFAC2A25 /* UsageSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshotTests.swift; sourceTree = "<group>"; };
+		398651AD2AC5ED7AFF31C06D /* ClaudeUsageProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeUsageProviderTests.swift; sourceTree = "<group>"; };
+		3FDCB066AF2BCE7E6DB04F0F /* ClaudeUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeUsageProvider.swift; sourceTree = "<group>"; };
 		4C27DA500FB4C196D1ABADD7 /* UsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageProvider.swift; sourceTree = "<group>"; };
 		5C23214559A0026828863BCC /* MenuBarContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentView.swift; sourceTree = "<group>"; };
 		7FCEBB531CF14BB13D5A42F7 /* TokenBarTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TokenBarTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -42,6 +46,7 @@
 		3412DA2B9C58161A36FA1FA1 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				398651AD2AC5ED7AFF31C06D /* ClaudeUsageProviderTests.swift */,
 				220F509A1DCAA52AFFAC2A25 /* UsageSnapshotTests.swift */,
 			);
 			name = Tests;
@@ -51,6 +56,7 @@
 		7422A2FF1247637839E7BABF /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				3FDCB066AF2BCE7E6DB04F0F /* ClaudeUsageProvider.swift */,
 				4C27DA500FB4C196D1ABADD7 /* UsageProvider.swift */,
 			);
 			path = Services;
@@ -192,6 +198,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				292A573A689EF6F1121CF0EC /* ClaudeUsageProvider.swift in Sources */,
 				628883B66BCCBA718912C560 /* MenuBarContentView.swift in Sources */,
 				C33405C39F6EA7BBB84B6910 /* ProviderCardView.swift in Sources */,
 				7AD4F25EB31CDF16D3BFBB3A /* TokenBarApp.swift in Sources */,
@@ -205,6 +212,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58AAB6413121E3438BD65A85 /* ClaudeUsageProviderTests.swift in Sources */,
 				E52A3CAFAD5C29C59407F5BD /* UsageSnapshotTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
