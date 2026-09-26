@@ -21,3 +21,9 @@ python3 scripts/install_claude_bridge.py
 ```
 
 설치 후 Claude Code를 시작하거나 메시지를 한 번 보내면 TokenBar에 표시됩니다.
+
+## Codex 연결
+
+별도 설정 없이 `~/.codex/sessions`의 로컬 사용량 이벤트를 읽습니다. 인증 정보와
+대화 내용은 읽지 않으며, 토큰 집계와 한도 필드만 디코딩합니다. Codex를 사용한 뒤
+최대 60초 안에 메뉴 막대 값이 갱신됩니다.

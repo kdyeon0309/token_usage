@@ -14,7 +14,9 @@
 		7AD4F25EB31CDF16D3BFBB3A /* TokenBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04CC43735E1B18053CB68912 /* TokenBarApp.swift */; };
 		80CBE847505058E79D8BE108 /* UsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B706FF89B22E5BF0B0A13B12 /* UsageSnapshot.swift */; };
 		A470B7F92B56606F8686ECED /* UsageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81A3B52AC6DE3605D854601 /* UsageStore.swift */; };
+		BDE3A7E7C4E152207F0DDC85 /* CodexUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FF4CAABADAA5146948D2D9A /* CodexUsageProviderTests.swift */; };
 		C33405C39F6EA7BBB84B6910 /* ProviderCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA638E0DD52EAA184FF74F3 /* ProviderCardView.swift */; };
+		D85A14156C19A995BDFFBD43 /* CodexUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E53EBEBD0B9B3D94328DF15B /* CodexUsageProvider.swift */; };
 		E52A3CAFAD5C29C59407F5BD /* UsageSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220F509A1DCAA52AFFAC2A25 /* UsageSnapshotTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -36,10 +38,12 @@
 		4C27DA500FB4C196D1ABADD7 /* UsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageProvider.swift; sourceTree = "<group>"; };
 		5C23214559A0026828863BCC /* MenuBarContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentView.swift; sourceTree = "<group>"; };
 		7FCEBB531CF14BB13D5A42F7 /* TokenBarTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TokenBarTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FF4CAABADAA5146948D2D9A /* CodexUsageProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexUsageProviderTests.swift; sourceTree = "<group>"; };
 		ADA638E0DD52EAA184FF74F3 /* ProviderCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderCardView.swift; sourceTree = "<group>"; };
 		B706FF89B22E5BF0B0A13B12 /* UsageSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshot.swift; sourceTree = "<group>"; };
 		D81A3B52AC6DE3605D854601 /* UsageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStore.swift; sourceTree = "<group>"; };
 		E1E82A1EE46FD1E7637C3943 /* TokenBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TokenBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E53EBEBD0B9B3D94328DF15B /* CodexUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexUsageProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -47,6 +51,7 @@
 			isa = PBXGroup;
 			children = (
 				398651AD2AC5ED7AFF31C06D /* ClaudeUsageProviderTests.swift */,
+				7FF4CAABADAA5146948D2D9A /* CodexUsageProviderTests.swift */,
 				220F509A1DCAA52AFFAC2A25 /* UsageSnapshotTests.swift */,
 			);
 			name = Tests;
@@ -57,6 +62,7 @@
 			isa = PBXGroup;
 			children = (
 				3FDCB066AF2BCE7E6DB04F0F /* ClaudeUsageProvider.swift */,
+				E53EBEBD0B9B3D94328DF15B /* CodexUsageProvider.swift */,
 				4C27DA500FB4C196D1ABADD7 /* UsageProvider.swift */,
 			);
 			path = Services;
@@ -199,6 +205,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				292A573A689EF6F1121CF0EC /* ClaudeUsageProvider.swift in Sources */,
+				D85A14156C19A995BDFFBD43 /* CodexUsageProvider.swift in Sources */,
 				628883B66BCCBA718912C560 /* MenuBarContentView.swift in Sources */,
 				C33405C39F6EA7BBB84B6910 /* ProviderCardView.swift in Sources */,
 				7AD4F25EB31CDF16D3BFBB3A /* TokenBarApp.swift in Sources */,
@@ -213,6 +220,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				58AAB6413121E3438BD65A85 /* ClaudeUsageProviderTests.swift in Sources */,
+				BDE3A7E7C4E152207F0DDC85 /* CodexUsageProviderTests.swift in Sources */,
 				E52A3CAFAD5C29C59407F5BD /* UsageSnapshotTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

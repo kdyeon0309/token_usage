@@ -3,7 +3,10 @@ import SwiftUI
 @main
 struct TokenBarApp: App {
     @StateObject private var store = UsageStore(
-        providers: [ClaudeUsageProvider()]
+        providers: [
+            ClaudeUsageProvider(),
+            CodexUsageProvider(),
+        ]
     )
 
     var body: some Scene {
