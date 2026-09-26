@@ -22,14 +22,31 @@ final class UsageStore: ObservableObject {
         refreshTask?.cancel()
     }
 
-    var menuBarTitle: String {
+    func menuBarTitle(for mode: MenuBarDisplayMode) -> String {
         let parts = UsageProviderID.allCases.compactMap { provider -> String? in
             guard let percentage = snapshots[provider]?.mostConstrainedRemainingPercentage else {
                 return nil
             }
             return "\(provider.shortName) \(Int(percentage.rounded()))%"
         }
-        return parts.isEmpty ? "--" : parts.joined(separator: " · ")
+        guard !parts.isEmpty else { return "--" }
+
+        switch mode {
+        case .allProviders:
+            return parts.joined(separator: " · ")
+        case .lowestRemaining:
+            return UsageProviderID.allCases
+                .compactMap { provider -> (UsageProviderID, Double)? in
+                    guard let remaining = snapshots[provider]?.mostConstrainedRemainingPercentage else {
+                        return nil
+                    }
+                    return (provider, remaining)
+                }
+                .min { $0.1 < $1.1 }
+                .map { "\($0.0.shortName) \(Int($0.1.rounded()))%" } ?? "--"
+        case .iconOnly:
+            return ""
+        }
     }
 
     func start() {

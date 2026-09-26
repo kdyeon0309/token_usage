@@ -3,6 +3,7 @@ import SwiftUI
 struct MenuBarContentView: View {
     @EnvironmentObject private var store: UsageStore
     @EnvironmentObject private var launchAtLogin: LaunchAtLoginController
+    @AppStorage("menuBarDisplayMode") private var menuBarDisplayModeRaw = MenuBarDisplayMode.allProviders.rawValue
 
     var body: some View {
         VStack(spacing: 0) {
@@ -49,6 +50,18 @@ struct MenuBarContentView: View {
 
     private var footer: some View {
         VStack(spacing: 9) {
+            HStack {
+                Text("메뉴 막대")
+                Spacer()
+                Picker("메뉴 막대", selection: $menuBarDisplayModeRaw) {
+                    ForEach(MenuBarDisplayMode.allCases) { mode in
+                        Text(mode.title).tag(mode.rawValue)
+                    }
+                }
+                .labelsHidden()
+                .frame(width: 145)
+            }
+
             Toggle(
                 "로그인 시 실행",
                 isOn: Binding(
