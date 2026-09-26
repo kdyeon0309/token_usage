@@ -3,6 +3,7 @@ import SwiftUI
 struct MenuBarContentView: View {
     @EnvironmentObject private var store: UsageStore
     @EnvironmentObject private var launchAtLogin: LaunchAtLoginController
+    @EnvironmentObject private var usageNotifications: UsageNotificationController
     @AppStorage("menuBarDisplayMode") private var menuBarDisplayModeRaw = MenuBarDisplayMode.allProviders.rawValue
 
     var body: some View {
@@ -72,7 +73,21 @@ struct MenuBarContentView: View {
             .toggleStyle(.switch)
             .controlSize(.small)
 
-            if let message = launchAtLogin.errorMessage ?? store.setupMessage {
+            Toggle(
+                "잔여량 알림 (20·10·5%)",
+                isOn: Binding(
+                    get: { usageNotifications.isEnabled },
+                    set: { enabled in
+                        Task { await usageNotifications.setEnabled(enabled) }
+                    }
+                )
+            )
+            .toggleStyle(.switch)
+            .controlSize(.small)
+
+            if let message = launchAtLogin.errorMessage
+                ?? usageNotifications.errorMessage
+                ?? store.setupMessage {
                 Text(message)
                     .font(.caption2)
                     .foregroundStyle(.secondary)

@@ -10,18 +10,23 @@ struct TokenBarApp: App {
         ]
     )
     @StateObject private var launchAtLogin = LaunchAtLoginController()
+    @StateObject private var usageNotifications = UsageNotificationController()
 
     var body: some Scene {
         MenuBarExtra {
             MenuBarContentView()
                 .environmentObject(store)
                 .environmentObject(launchAtLogin)
+                .environmentObject(usageNotifications)
                 .task {
                     store.start()
                 }
         } label: {
             menuBarLabel
                 .task { store.start() }
+                .onChange(of: store.snapshots) { snapshots in
+                    Task { await usageNotifications.evaluate(snapshots) }
+                }
         }
         .menuBarExtraStyle(.window)
     }
