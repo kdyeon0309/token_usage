@@ -10,6 +10,12 @@ struct MenuBarContentView: View {
         VStack(spacing: 0) {
             header
 
+            if let recommendation = store.recommendation {
+                recommendationBanner(recommendation)
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 10)
+            }
+
             Divider()
 
             VStack(spacing: 10) {
@@ -17,6 +23,7 @@ struct MenuBarContentView: View {
                     ProviderCardView(
                         provider: provider,
                         snapshot: store.snapshots[provider],
+                        advice: store.advice[provider],
                         error: store.errors[provider]
                     )
                 }
@@ -29,6 +36,29 @@ struct MenuBarContentView: View {
         }
         .frame(width: 340)
         .background(.regularMaterial)
+    }
+
+    private func recommendationBanner(_ recommendation: UsageRecommendation) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: recommendation.preferredProvider == nil
+                ? "checkmark.circle.fill"
+                : "arrow.triangle.swap")
+                .foregroundStyle(
+                    recommendation.preferredProvider == nil ? Color.green : Color.accentColor
+                )
+            VStack(alignment: .leading, spacing: 2) {
+                Text(recommendation.preferredProvider == nil ? "사용 균형" : "사용 추천")
+                    .font(.caption.weight(.semibold))
+                Text(recommendation.message)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(9)
+        .background(Color.accentColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 9))
     }
 
     private var header: some View {

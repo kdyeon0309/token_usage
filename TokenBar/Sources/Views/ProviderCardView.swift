@@ -3,6 +3,7 @@ import SwiftUI
 struct ProviderCardView: View {
     let provider: UsageProviderID
     let snapshot: UsageSnapshot?
+    let advice: ProviderUsageAdvice?
     let error: String?
 
     var body: some View {
@@ -23,6 +24,9 @@ struct ProviderCardView: View {
                 if let window = snapshot.weeklyWindow {
                     UsageProgressRow(title: "주간", window: window)
                 }
+                if let advice {
+                    paceDetails(advice)
+                }
                 details(snapshot)
                 if let error {
                     Label(error, systemImage: "exclamationmark.triangle.fill")
@@ -40,6 +44,75 @@ struct ProviderCardView: View {
         .overlay {
             RoundedRectangle(cornerRadius: 12)
                 .strokeBorder(.separator.opacity(0.5))
+        }
+    }
+
+    private func paceDetails(_ advice: ProviderUsageAdvice) -> some View {
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(spacing: 6) {
+                Label(paceTitle(advice.pace), systemImage: paceIcon(advice.pace))
+                    .foregroundStyle(paceColor(advice.pace))
+                Spacer()
+                if let safeRate = advice.safeRatePerHour {
+                    Text("권장 ≤ \(rateText(safeRate))%/시간")
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            if let recentRate = advice.recentRatePerHour {
+                HStack {
+                    Text("최근 \(rateText(recentRate))%/시간")
+                    Spacer()
+                    forecastText(advice)
+                }
+                .foregroundStyle(.secondary)
+            } else {
+                Text("5분 이상 사용하면 소진 시각을 예측합니다.")
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .font(.caption2.monospacedDigit())
+        .padding(8)
+        .background(paceColor(advice.pace).opacity(0.08), in: RoundedRectangle(cornerRadius: 8))
+    }
+
+    @ViewBuilder
+    private func forecastText(_ advice: ProviderUsageAdvice) -> some View {
+        if let depletionDate = advice.depletionDate,
+           advice.resetDate.map({ depletionDate < $0 }) ?? true {
+            Text("소진 예상 \(depletionDate.formatted(date: .omitted, time: .shortened))")
+                .foregroundStyle(advice.pace == .fast ? .orange : .secondary)
+        } else {
+            Text("리셋까지 유지 가능")
+                .foregroundStyle(.green)
+        }
+    }
+
+    private func rateText(_ value: Double) -> String {
+        value.formatted(.number.precision(.fractionLength(value >= 10 ? 0 : 1)))
+    }
+
+    private func paceTitle(_ pace: UsagePace) -> String {
+        switch pace {
+        case .learning: "속도 분석 중"
+        case .stable: "안전한 속도"
+        case .fast: "빠른 사용"
+        }
+    }
+
+    private func paceIcon(_ pace: UsagePace) -> String {
+        switch pace {
+        case .learning: "hourglass"
+        case .stable: "checkmark.circle.fill"
+        case .fast: "speedometer"
+        }
+    }
+
+    private func paceColor(_ pace: UsagePace) -> Color {
+        switch pace {
+        case .learning: .secondary
+        case .stable: .green
+        case .fast: .orange
         }
     }
 

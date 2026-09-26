@@ -95,14 +95,19 @@ enum UsageAdvisor {
         let depletionDate = recentRate > 0
             ? now.addingTimeInterval(window.remainingPercentage / recentRate * 3600)
             : nil
-        let isFast = safeRate.map { recentRate > $0 * 1.1 } ?? false
+        let pace: UsagePace
+        if let safeRate {
+            pace = recentRate > safeRate * 1.1 ? .fast : .stable
+        } else {
+            pace = .learning
+        }
 
         return ProviderUsageAdvice(
             safeRatePerHour: safeRate,
             recentRatePerHour: recentRate,
             depletionDate: depletionDate,
             resetDate: window.resetsAt,
-            pace: isFast ? .fast : .stable
+            pace: pace
         )
     }
 
