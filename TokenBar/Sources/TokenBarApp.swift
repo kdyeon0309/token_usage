@@ -8,16 +8,21 @@ struct TokenBarApp: App {
             CodexUsageProvider(),
         ]
     )
+    @StateObject private var launchAtLogin = LaunchAtLoginController()
 
     var body: some Scene {
         MenuBarExtra {
             MenuBarContentView()
                 .environmentObject(store)
+                .environmentObject(launchAtLogin)
                 .task {
                     store.start()
                 }
         } label: {
             Label(store.menuBarTitle, systemImage: "gauge.with.dots.needle.67percent")
+                .task {
+                    store.start()
+                }
         }
         .menuBarExtraStyle(.window)
     }

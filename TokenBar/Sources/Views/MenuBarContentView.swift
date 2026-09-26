@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MenuBarContentView: View {
     @EnvironmentObject private var store: UsageStore
+    @EnvironmentObject private var launchAtLogin: LaunchAtLoginController
 
     var body: some View {
         VStack(spacing: 0) {
@@ -47,25 +48,60 @@ struct MenuBarContentView: View {
     }
 
     private var footer: some View {
-        HStack {
-            Button {
-                Task { await store.refresh() }
-            } label: {
-                Label("새로고침", systemImage: "arrow.clockwise")
-            }
-            .buttonStyle(.plain)
-            .disabled(store.isRefreshing)
+        VStack(spacing: 9) {
+            Toggle(
+                "로그인 시 실행",
+                isOn: Binding(
+                    get: { launchAtLogin.isEnabled },
+                    set: { launchAtLogin.setEnabled($0) }
+                )
+            )
+            .toggleStyle(.switch)
+            .controlSize(.small)
 
-            Spacer()
-
-            Button("종료") {
-                store.quit()
+            if let message = launchAtLogin.errorMessage ?? store.setupMessage {
+                Text(message)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .lineLimit(2)
             }
-            .buttonStyle(.plain)
-            .foregroundStyle(.secondary)
+
+            HStack {
+                Button {
+                    Task { await store.installClaudeBridge() }
+                } label: {
+                    if store.isInstallingClaudeBridge {
+                        ProgressView()
+                            .controlSize(.mini)
+                    } else {
+                        Label("Claude 연결", systemImage: "link")
+                    }
+                }
+                .buttonStyle(.plain)
+                .disabled(store.isInstallingClaudeBridge)
+
+                Divider()
+                    .frame(height: 12)
+
+                Button {
+                    Task { await store.refresh() }
+                } label: {
+                    Label("새로고침", systemImage: "arrow.clockwise")
+                }
+                .buttonStyle(.plain)
+                .disabled(store.isRefreshing)
+
+                Spacer()
+
+                Button("종료") {
+                    store.quit()
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+            }
         }
         .font(.caption)
         .padding(12)
     }
 }
-

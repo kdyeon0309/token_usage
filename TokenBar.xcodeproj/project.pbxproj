@@ -8,7 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		041953EBEE2A877AA9F4DAE0 /* UsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C27DA500FB4C196D1ABADD7 /* UsageProvider.swift */; };
+		1A53C888A47A13306B941E26 /* install_claude_bridge.py in Resources */ = {isa = PBXBuildFile; fileRef = 7433023522E71531C1AFF34A /* install_claude_bridge.py */; };
 		292A573A689EF6F1121CF0EC /* ClaudeUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FDCB066AF2BCE7E6DB04F0F /* ClaudeUsageProvider.swift */; };
+		32C0ED35965D23A655D4EE26 /* ClaudeBridgeInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6D20EA194D4D73015C03D4 /* ClaudeBridgeInstaller.swift */; };
+		4735CA273F603C40CBAF2906 /* claude_statusline_bridge.py in Resources */ = {isa = PBXBuildFile; fileRef = 243A22CD32D2FA484372F927 /* claude_statusline_bridge.py */; };
 		58AAB6413121E3438BD65A85 /* ClaudeUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398651AD2AC5ED7AFF31C06D /* ClaudeUsageProviderTests.swift */; };
 		628883B66BCCBA718912C560 /* MenuBarContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C23214559A0026828863BCC /* MenuBarContentView.swift */; };
 		7AD4F25EB31CDF16D3BFBB3A /* TokenBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04CC43735E1B18053CB68912 /* TokenBarApp.swift */; };
@@ -16,6 +19,7 @@
 		A470B7F92B56606F8686ECED /* UsageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81A3B52AC6DE3605D854601 /* UsageStore.swift */; };
 		BDE3A7E7C4E152207F0DDC85 /* CodexUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FF4CAABADAA5146948D2D9A /* CodexUsageProviderTests.swift */; };
 		C33405C39F6EA7BBB84B6910 /* ProviderCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA638E0DD52EAA184FF74F3 /* ProviderCardView.swift */; };
+		C644999D37E9812D4C2AE6DB /* LaunchAtLoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D2F90B326A3BD2498EE817F /* LaunchAtLoginController.swift */; };
 		D85A14156C19A995BDFFBD43 /* CodexUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E53EBEBD0B9B3D94328DF15B /* CodexUsageProvider.swift */; };
 		E52A3CAFAD5C29C59407F5BD /* UsageSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220F509A1DCAA52AFFAC2A25 /* UsageSnapshotTests.swift */; };
 /* End PBXBuildFile section */
@@ -32,11 +36,15 @@
 
 /* Begin PBXFileReference section */
 		04CC43735E1B18053CB68912 /* TokenBarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenBarApp.swift; sourceTree = "<group>"; };
+		1D2F90B326A3BD2498EE817F /* LaunchAtLoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginController.swift; sourceTree = "<group>"; };
 		220F509A1DCAA52AFFAC2A25 /* UsageSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshotTests.swift; sourceTree = "<group>"; };
+		243A22CD32D2FA484372F927 /* claude_statusline_bridge.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = claude_statusline_bridge.py; sourceTree = "<group>"; };
 		398651AD2AC5ED7AFF31C06D /* ClaudeUsageProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeUsageProviderTests.swift; sourceTree = "<group>"; };
+		3B6D20EA194D4D73015C03D4 /* ClaudeBridgeInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeBridgeInstaller.swift; sourceTree = "<group>"; };
 		3FDCB066AF2BCE7E6DB04F0F /* ClaudeUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeUsageProvider.swift; sourceTree = "<group>"; };
 		4C27DA500FB4C196D1ABADD7 /* UsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageProvider.swift; sourceTree = "<group>"; };
 		5C23214559A0026828863BCC /* MenuBarContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentView.swift; sourceTree = "<group>"; };
+		7433023522E71531C1AFF34A /* install_claude_bridge.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = install_claude_bridge.py; sourceTree = "<group>"; };
 		7FCEBB531CF14BB13D5A42F7 /* TokenBarTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TokenBarTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FF4CAABADAA5146948D2D9A /* CodexUsageProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexUsageProviderTests.swift; sourceTree = "<group>"; };
 		ADA638E0DD52EAA184FF74F3 /* ProviderCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderCardView.swift; sourceTree = "<group>"; };
@@ -47,6 +55,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		202A62685C7B382A2F1AC455 /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				243A22CD32D2FA484372F927 /* claude_statusline_bridge.py */,
+				7433023522E71531C1AFF34A /* install_claude_bridge.py */,
+			);
+			path = scripts;
+			sourceTree = "<group>";
+		};
 		3412DA2B9C58161A36FA1FA1 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -61,8 +78,10 @@
 		7422A2FF1247637839E7BABF /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				3B6D20EA194D4D73015C03D4 /* ClaudeBridgeInstaller.swift */,
 				3FDCB066AF2BCE7E6DB04F0F /* ClaudeUsageProvider.swift */,
 				E53EBEBD0B9B3D94328DF15B /* CodexUsageProvider.swift */,
+				1D2F90B326A3BD2498EE817F /* LaunchAtLoginController.swift */,
 				4C27DA500FB4C196D1ABADD7 /* UsageProvider.swift */,
 			);
 			path = Services;
@@ -100,6 +119,7 @@
 		ABFAF353D19CC18631A1C5E4 = {
 			isa = PBXGroup;
 			children = (
+				202A62685C7B382A2F1AC455 /* scripts */,
 				A7852218F65306D6397AA28F /* Sources */,
 				3412DA2B9C58161A36FA1FA1 /* Tests */,
 				FFB84DA4E38E744D734B034A /* Products */,
@@ -150,6 +170,7 @@
 			buildConfigurationList = F02FF9FBDA0222C31FF4C990 /* Build configuration list for PBXNativeTarget "TokenBar" */;
 			buildPhases = (
 				4EAD462B16E6499689DF171E /* Sources */,
+				E16E839CD7A8C555BF9EAA9C /* Resources */,
 			);
 			buildRules = (
 			);
@@ -199,13 +220,27 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		E16E839CD7A8C555BF9EAA9C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4735CA273F603C40CBAF2906 /* claude_statusline_bridge.py in Resources */,
+				1A53C888A47A13306B941E26 /* install_claude_bridge.py in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		4EAD462B16E6499689DF171E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32C0ED35965D23A655D4EE26 /* ClaudeBridgeInstaller.swift in Sources */,
 				292A573A689EF6F1121CF0EC /* ClaudeUsageProvider.swift in Sources */,
 				D85A14156C19A995BDFFBD43 /* CodexUsageProvider.swift in Sources */,
+				C644999D37E9812D4C2AE6DB /* LaunchAtLoginController.swift in Sources */,
 				628883B66BCCBA718912C560 /* MenuBarContentView.swift in Sources */,
 				C33405C39F6EA7BBB84B6910 /* ProviderCardView.swift in Sources */,
 				7AD4F25EB31CDF16D3BFBB3A /* TokenBarApp.swift in Sources */,

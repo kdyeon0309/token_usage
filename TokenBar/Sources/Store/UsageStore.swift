@@ -6,6 +6,8 @@ final class UsageStore: ObservableObject {
     @Published private(set) var snapshots: [UsageProviderID: UsageSnapshot] = [:]
     @Published private(set) var errors: [UsageProviderID: String] = [:]
     @Published private(set) var isRefreshing = false
+    @Published private(set) var isInstallingClaudeBridge = false
+    @Published private(set) var setupMessage: String?
 
     private let providers: [any UsageProvider]
     private var refreshTask: Task<Void, Never>?
@@ -74,5 +76,16 @@ final class UsageStore: ObservableObject {
     func quit() {
         NSApplication.shared.terminate(nil)
     }
-}
 
+    func installClaudeBridge() async {
+        guard !isInstallingClaudeBridge else { return }
+        isInstallingClaudeBridge = true
+        defer { isInstallingClaudeBridge = false }
+
+        do {
+            setupMessage = try await ClaudeBridgeInstaller().install()
+        } catch {
+            setupMessage = error.localizedDescription
+        }
+    }
+}
