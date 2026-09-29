@@ -184,6 +184,11 @@ struct MenuBarContentView: View {
                     .lineLimit(2)
             }
 
+            Text("한도는 서비스가 제공하는 사용률(%) 기준입니다. 절대 토큰 한도는 제공되지 않습니다.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
             HStack {
                 Button {
                     Task { await store.installClaudeBridge() }
