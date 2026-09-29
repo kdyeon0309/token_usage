@@ -4,6 +4,7 @@ struct ProviderCardView: View {
     let provider: UsageProviderID
     let snapshot: UsageSnapshot?
     let advice: ProviderUsageAdvice?
+    let nextBillingDate: Date?
     let error: String?
 
     var body: some View {
@@ -28,6 +29,9 @@ struct ProviderCardView: View {
                     paceDetails(advice)
                 }
                 details(snapshot)
+                if let nextBillingDate {
+                    billingDetails(nextBillingDate)
+                }
                 if let error {
                     Label(error, systemImage: "exclamationmark.triangle.fill")
                         .font(.caption2)
@@ -45,6 +49,22 @@ struct ProviderCardView: View {
             RoundedRectangle(cornerRadius: 12)
                 .strokeBorder(.separator.opacity(0.5))
         }
+    }
+
+    private func billingDetails(_ date: Date) -> some View {
+        let days = BillingSchedule.daysRemaining(until: date, from: .now)
+        return HStack(spacing: 5) {
+            Image(systemName: "creditcard")
+            Text("다음 결제")
+            Text(date.formatted(date: .abbreviated, time: .omitted))
+                .monospacedDigit()
+            Spacer()
+            Text(days == 0 ? "오늘" : "D-\(days)")
+                .monospacedDigit()
+                .fontWeight(.medium)
+        }
+        .font(.caption2)
+        .foregroundStyle(days <= 3 ? Color.orange : Color.secondary)
     }
 
     private func paceDetails(_ advice: ProviderUsageAdvice) -> some View {

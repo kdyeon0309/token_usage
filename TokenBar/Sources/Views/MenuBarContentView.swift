@@ -5,6 +5,9 @@ struct MenuBarContentView: View {
     @EnvironmentObject private var launchAtLogin: LaunchAtLoginController
     @EnvironmentObject private var usageNotifications: UsageNotificationController
     @AppStorage("menuBarDisplayMode") private var menuBarDisplayModeRaw = MenuBarDisplayMode.allProviders.rawValue
+    @AppStorage("claudeBillingDate") private var claudeBillingDateTimestamp = 0.0
+    @AppStorage("codexBillingDate") private var codexBillingDateTimestamp = 0.0
+    @State private var isBillingSettingsExpanded = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -30,6 +33,7 @@ struct MenuBarContentView: View {
                         provider: provider,
                         snapshot: store.snapshots[provider],
                         advice: store.advice[provider],
+                        nextBillingDate: nextBillingDate(for: provider),
                         error: store.errors[provider]
                     )
                 }
@@ -140,6 +144,24 @@ struct MenuBarContentView: View {
             .toggleStyle(.switch)
             .controlSize(.small)
 
+            DisclosureGroup("결제 예정일", isExpanded: $isBillingSettingsExpanded) {
+                VStack(spacing: 7) {
+                    billingDateEditor(
+                        provider: .claude,
+                        timestamp: $claudeBillingDateTimestamp
+                    )
+                    billingDateEditor(
+                        provider: .codex,
+                        timestamp: $codexBillingDateTimestamp
+                    )
+                    Text("구독 결제일은 서비스 데이터에 없어 직접 설정합니다.")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(.top, 5)
+            }
+
             Toggle(
                 "잔여량 알림 (20·10·5%)",
                 isOn: Binding(
@@ -198,5 +220,54 @@ struct MenuBarContentView: View {
         }
         .font(.caption)
         .padding(12)
+    }
+
+    @ViewBuilder
+    private func billingDateEditor(
+        provider: UsageProviderID,
+        timestamp: Binding<Double>
+    ) -> some View {
+        HStack {
+            Toggle(
+                provider.displayName,
+                isOn: Binding(
+                    get: { timestamp.wrappedValue > 0 },
+                    set: { enabled in
+                        let defaultDate = Calendar.current.date(
+                            byAdding: .month,
+                            value: 1,
+                            to: .now
+                        ) ?? .now
+                        timestamp.wrappedValue = enabled ? defaultDate.timeIntervalSince1970 : 0
+                    }
+                )
+            )
+            .toggleStyle(.checkbox)
+
+            Spacer()
+
+            if timestamp.wrappedValue > 0 {
+                DatePicker(
+                    provider.displayName,
+                    selection: Binding(
+                        get: { Date(timeIntervalSince1970: timestamp.wrappedValue) },
+                        set: { timestamp.wrappedValue = $0.timeIntervalSince1970 }
+                    ),
+                    displayedComponents: .date
+                )
+                .labelsHidden()
+            }
+        }
+    }
+
+    private func nextBillingDate(for provider: UsageProviderID) -> Date? {
+        let timestamp = provider == .claude
+            ? claudeBillingDateTimestamp
+            : codexBillingDateTimestamp
+        guard timestamp > 0 else { return nil }
+        return BillingSchedule.nextBillingDate(
+            from: Date(timeIntervalSince1970: timestamp),
+            after: .now
+        )
     }
 }

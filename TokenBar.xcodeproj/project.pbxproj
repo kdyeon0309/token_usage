@@ -17,11 +17,13 @@
 		58AAB6413121E3438BD65A85 /* ClaudeUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398651AD2AC5ED7AFF31C06D /* ClaudeUsageProviderTests.swift */; };
 		628883B66BCCBA718912C560 /* MenuBarContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C23214559A0026828863BCC /* MenuBarContentView.swift */; };
 		64A05889E1A9A4D84D3094F9 /* UsageAdvice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 430DCEFAEB414EC3C1CA3762 /* UsageAdvice.swift */; };
+		6B6B31CF6B003CA216F8277E /* BillingSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3877F3F2E697846F1A30D4FF /* BillingSchedule.swift */; };
 		6D6CC6181AF7AB36D210B8D1 /* UsageNotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11BA2EB74C96D2A6D639752D /* UsageNotificationController.swift */; };
 		7AD4F25EB31CDF16D3BFBB3A /* TokenBarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04CC43735E1B18053CB68912 /* TokenBarApp.swift */; };
 		7CFB2F082B472AD7B47BFA9E /* UsageNotificationPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5D31A5945FED68CB08422B /* UsageNotificationPolicyTests.swift */; };
 		80CBE847505058E79D8BE108 /* UsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = B706FF89B22E5BF0B0A13B12 /* UsageSnapshot.swift */; };
 		A470B7F92B56606F8686ECED /* UsageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81A3B52AC6DE3605D854601 /* UsageStore.swift */; };
+		AA4CDD4AA27E15837C14845D /* BillingScheduleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF302B6EEEBFF66C48E7E537 /* BillingScheduleTests.swift */; };
 		BDE3A7E7C4E152207F0DDC85 /* CodexUsageProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FF4CAABADAA5146948D2D9A /* CodexUsageProviderTests.swift */; };
 		C33405C39F6EA7BBB84B6910 /* ProviderCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA638E0DD52EAA184FF74F3 /* ProviderCardView.swift */; };
 		C644999D37E9812D4C2AE6DB /* LaunchAtLoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D2F90B326A3BD2498EE817F /* LaunchAtLoginController.swift */; };
@@ -46,6 +48,7 @@
 		1D2F90B326A3BD2498EE817F /* LaunchAtLoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginController.swift; sourceTree = "<group>"; };
 		220F509A1DCAA52AFFAC2A25 /* UsageSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshotTests.swift; sourceTree = "<group>"; };
 		243A22CD32D2FA484372F927 /* claude_statusline_bridge.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = claude_statusline_bridge.py; sourceTree = "<group>"; };
+		3877F3F2E697846F1A30D4FF /* BillingSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillingSchedule.swift; sourceTree = "<group>"; };
 		398651AD2AC5ED7AFF31C06D /* ClaudeUsageProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeUsageProviderTests.swift; sourceTree = "<group>"; };
 		3B6D20EA194D4D73015C03D4 /* ClaudeBridgeInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeBridgeInstaller.swift; sourceTree = "<group>"; };
 		3FDCB066AF2BCE7E6DB04F0F /* ClaudeUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeUsageProvider.swift; sourceTree = "<group>"; };
@@ -60,6 +63,7 @@
 		ADA638E0DD52EAA184FF74F3 /* ProviderCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderCardView.swift; sourceTree = "<group>"; };
 		B706FF89B22E5BF0B0A13B12 /* UsageSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshot.swift; sourceTree = "<group>"; };
 		D81A3B52AC6DE3605D854601 /* UsageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageStore.swift; sourceTree = "<group>"; };
+		DF302B6EEEBFF66C48E7E537 /* BillingScheduleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BillingScheduleTests.swift; sourceTree = "<group>"; };
 		E1E82A1EE46FD1E7637C3943 /* TokenBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TokenBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E53EBEBD0B9B3D94328DF15B /* CodexUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodexUsageProvider.swift; sourceTree = "<group>"; };
 		F82507B6A4532766945DD5CE /* MenuBarDisplayMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarDisplayMode.swift; sourceTree = "<group>"; };
@@ -79,6 +83,7 @@
 		3412DA2B9C58161A36FA1FA1 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				DF302B6EEEBFF66C48E7E537 /* BillingScheduleTests.swift */,
 				398651AD2AC5ED7AFF31C06D /* ClaudeUsageProviderTests.swift */,
 				7FF4CAABADAA5146948D2D9A /* CodexUsageProviderTests.swift */,
 				FEB9E389D38F0B05A3E2109A /* UsageAdvisorTests.swift */,
@@ -106,6 +111,7 @@
 		80C3BFC47D824598A0E1CC84 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				3877F3F2E697846F1A30D4FF /* BillingSchedule.swift */,
 				F82507B6A4532766945DD5CE /* MenuBarDisplayMode.swift */,
 				430DCEFAEB414EC3C1CA3762 /* UsageAdvice.swift */,
 				B706FF89B22E5BF0B0A13B12 /* UsageSnapshot.swift */,
@@ -255,6 +261,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B6B31CF6B003CA216F8277E /* BillingSchedule.swift in Sources */,
 				32C0ED35965D23A655D4EE26 /* ClaudeBridgeInstaller.swift in Sources */,
 				292A573A689EF6F1121CF0EC /* ClaudeUsageProvider.swift in Sources */,
 				D85A14156C19A995BDFFBD43 /* CodexUsageProvider.swift in Sources */,
@@ -276,6 +283,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA4CDD4AA27E15837C14845D /* BillingScheduleTests.swift in Sources */,
 				58AAB6413121E3438BD65A85 /* ClaudeUsageProviderTests.swift in Sources */,
 				BDE3A7E7C4E152207F0DDC85 /* CodexUsageProviderTests.swift in Sources */,
 				D602A580674795E5E3DBEDF7 /* UsageAdvisorTests.swift in Sources */,
