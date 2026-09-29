@@ -22,10 +22,12 @@ final class UsageNotificationController: ObservableObject {
     private let center: UNUserNotificationCenter
     private let defaults: UserDefaults
     private var notifiedThresholds: [String: Int]
+    private var notifiedResetEvents: Set<String>
 
     private enum Keys {
         static let enabled = "usageNotificationsEnabled"
         static let notifiedThresholds = "usageNotifiedThresholds"
+        static let notifiedResetEvents = "usageNotifiedResetEvents"
     }
 
     init(
@@ -37,6 +39,7 @@ final class UsageNotificationController: ObservableObject {
         isEnabled = defaults.bool(forKey: Keys.enabled)
         notifiedThresholds = defaults.dictionary(forKey: Keys.notifiedThresholds)?
             .compactMapValues { ($0 as? NSNumber)?.intValue } ?? [:]
+        notifiedResetEvents = Set(defaults.stringArray(forKey: Keys.notifiedResetEvents) ?? [])
     }
 
     func setEnabled(_ enabled: Bool) async {
@@ -81,6 +84,31 @@ final class UsageNotificationController: ObservableObject {
                 windowID: "weekly",
                 windowName: "주간"
             )
+        }
+    }
+
+    func notifyUnexpectedResets(_ events: [UsageResetEvent]) async {
+        guard isEnabled else { return }
+
+        for event in events where !notifiedResetEvents.contains(event.id) {
+            let content = UNMutableNotificationContent()
+            content.title = "\(event.provider.displayName) 예정 외 초기화 감지"
+            content.body = "\(event.window.displayName) 사용 가능량이 \(Int(event.restoredPercentage.rounded()))%p 회복되었습니다."
+            content.sound = .default
+
+            do {
+                try await center.add(
+                    UNNotificationRequest(
+                        identifier: "tokenbar.reset.\(event.id)",
+                        content: content,
+                        trigger: nil
+                    )
+                )
+                notifiedResetEvents.insert(event.id)
+                defaults.set(Array(notifiedResetEvents), forKey: Keys.notifiedResetEvents)
+            } catch {
+                errorMessage = "초기화 감지 알림을 표시하지 못했습니다."
+            }
         }
     }
 

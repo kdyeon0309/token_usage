@@ -5,12 +5,41 @@ struct UsageSample: Codable, Equatable, Sendable {
     let capturedAt: Date
     let shortUsedPercentage: Double?
     let shortResetsAt: Date?
+    let weeklyUsedPercentage: Double?
+    let weeklyResetsAt: Date?
 
     init(snapshot: UsageSnapshot, capturedAt: Date) {
         provider = snapshot.provider
         self.capturedAt = capturedAt
         shortUsedPercentage = snapshot.shortWindow?.usedPercentage
         shortResetsAt = snapshot.shortWindow?.resetsAt
+        weeklyUsedPercentage = snapshot.weeklyWindow?.usedPercentage
+        weeklyResetsAt = snapshot.weeklyWindow?.resetsAt
+    }
+}
+
+enum UsageWindowKind: String, Codable, CaseIterable, Sendable {
+    case short
+    case weekly
+
+    var displayName: String {
+        switch self {
+        case .short: "5시간"
+        case .weekly: "주간"
+        }
+    }
+}
+
+struct UsageResetEvent: Equatable, Identifiable, Sendable {
+    let provider: UsageProviderID
+    let window: UsageWindowKind
+    let detectedAt: Date
+    let restoredPercentage: Double
+    let previousScheduledReset: Date?
+    let newScheduledReset: Date?
+
+    var id: String {
+        "\(provider.rawValue).\(window.rawValue).\(Int(detectedAt.timeIntervalSince1970))"
     }
 }
 
@@ -36,6 +65,8 @@ struct UsageRecommendation: Equatable, Sendable {
 enum UsageAdvisor {
     private static let observationWindow: TimeInterval = 60 * 60
     private static let minimumObservationInterval: TimeInterval = 5 * 60
+    private static let unexpectedResetMargin: TimeInterval = 10 * 60
+    private static let minimumResetRecovery = 20.0
 
     static func makeAdvice(
         snapshots: [UsageProviderID: UsageSnapshot],
@@ -151,6 +182,54 @@ enum UsageAdvisor {
         )
     }
 
+    static func recentUnexpectedResets(
+        history: [UsageSample],
+        now: Date,
+        lookback: TimeInterval = 24 * 60 * 60
+    ) -> [UsageResetEvent] {
+        var events: [UsageResetEvent] = []
+
+        for provider in UsageProviderID.allCases {
+            let samples = history
+                .filter {
+                    $0.provider == provider
+                        && $0.capturedAt >= now.addingTimeInterval(-lookback)
+                        && $0.capturedAt <= now
+                }
+                .sorted { $0.capturedAt < $1.capturedAt }
+
+            for (previous, current) in zip(samples, samples.dropFirst()) {
+                for window in UsageWindowKind.allCases {
+                    guard let previousUsed = usedPercentage(in: previous, window: window),
+                          let currentUsed = usedPercentage(in: current, window: window) else {
+                        continue
+                    }
+                    let restored = previousUsed - currentUsed
+                    guard restored >= minimumResetRecovery else { continue }
+
+                    let previousReset = resetDate(in: previous, window: window)
+                    let happenedBeforeSchedule = previousReset.map {
+                        current.capturedAt < $0.addingTimeInterval(-unexpectedResetMargin)
+                    } ?? true
+                    guard happenedBeforeSchedule else { continue }
+
+                    events.append(
+                        UsageResetEvent(
+                            provider: provider,
+                            window: window,
+                            detectedAt: current.capturedAt,
+                            restoredPercentage: restored,
+                            previousScheduledReset: previousReset,
+                            newScheduledReset: resetDate(in: current, window: window)
+                        )
+                    )
+                }
+            }
+        }
+
+        return events.sorted { $0.detectedAt > $1.detectedAt }
+    }
+
     private static func sameResetCycle(_ lhs: Date?, _ rhs: Date?) -> Bool {
         switch (lhs, rhs) {
         case (.none, .none):
@@ -159,6 +238,23 @@ enum UsageAdvisor {
             abs(lhs.timeIntervalSince(rhs)) < 60
         default:
             false
+        }
+    }
+
+    private static func usedPercentage(
+        in sample: UsageSample,
+        window: UsageWindowKind
+    ) -> Double? {
+        switch window {
+        case .short: sample.shortUsedPercentage
+        case .weekly: sample.weeklyUsedPercentage
+        }
+    }
+
+    private static func resetDate(in sample: UsageSample, window: UsageWindowKind) -> Date? {
+        switch window {
+        case .short: sample.shortResetsAt
+        case .weekly: sample.weeklyResetsAt
         }
     }
 }

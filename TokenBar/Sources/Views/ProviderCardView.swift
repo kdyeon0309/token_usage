@@ -211,6 +211,18 @@ private struct UsageProgressRow: View {
             }
             ProgressView(value: window.remainingPercentage, total: 100)
                 .tint(tint)
+            if let reset = window.resetsAt {
+                HStack {
+                    Label(
+                        reset.formatted(date: .abbreviated, time: .shortened),
+                        systemImage: "calendar.badge.clock"
+                    )
+                    Spacer()
+                    Text("초기화 후 100%")
+                }
+                .font(.caption2.monospacedDigit())
+                .foregroundStyle(.secondary)
+            }
         }
     }
 

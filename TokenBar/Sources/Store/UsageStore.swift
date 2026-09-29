@@ -7,6 +7,7 @@ final class UsageStore: ObservableObject {
     @Published private(set) var errors: [UsageProviderID: String] = [:]
     @Published private(set) var advice: [UsageProviderID: ProviderUsageAdvice] = [:]
     @Published private(set) var recommendation: UsageRecommendation?
+    @Published private(set) var recentUnexpectedResets: [UsageResetEvent] = []
     @Published private(set) var isRefreshing = false
     @Published private(set) var isInstallingClaudeBridge = false
     @Published private(set) var setupMessage: String?
@@ -112,6 +113,10 @@ final class UsageStore: ObservableObject {
             now: currentDate
         )
         recommendation = UsageAdvisor.recommendation(snapshots: snapshots, advice: advice)
+        recentUnexpectedResets = UsageAdvisor.recentUnexpectedResets(
+            history: history,
+            now: currentDate
+        )
     }
 
     func quit() {

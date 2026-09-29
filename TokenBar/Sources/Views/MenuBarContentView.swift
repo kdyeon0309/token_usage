@@ -16,6 +16,12 @@ struct MenuBarContentView: View {
                     .padding(.bottom, 10)
             }
 
+            if let event = store.recentUnexpectedResets.first {
+                unexpectedResetBanner(event, count: store.recentUnexpectedResets.count)
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 10)
+            }
+
             Divider()
 
             VStack(spacing: 10) {
@@ -59,6 +65,37 @@ struct MenuBarContentView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(9)
         .background(Color.accentColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 9))
+    }
+
+    private func unexpectedResetBanner(_ event: UsageResetEvent, count: Int) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: "arrow.counterclockwise.circle.fill")
+                .foregroundStyle(.blue)
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 5) {
+                    Text("예정 외 초기화 감지")
+                        .font(.caption.weight(.semibold))
+                    if count > 1 {
+                        Text("+\(count - 1)건")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                Text(
+                    "\(event.provider.displayName) \(event.window.displayName) 사용 가능량이 "
+                        + "\(Int(event.restoredPercentage.rounded()))%p 회복됨"
+                )
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                Text(event.detectedAt, style: .relative)
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(.secondary)
+            }
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(9)
+        .background(Color.blue.opacity(0.08), in: RoundedRectangle(cornerRadius: 9))
     }
 
     private var header: some View {

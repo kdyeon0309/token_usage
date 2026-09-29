@@ -27,6 +27,9 @@ struct TokenBarApp: App {
                 .onChange(of: store.snapshots) { snapshots in
                     Task { await usageNotifications.evaluate(snapshots) }
                 }
+                .onChange(of: store.recentUnexpectedResets) { events in
+                    Task { await usageNotifications.notifyUnexpectedResets(events) }
+                }
         }
         .menuBarExtraStyle(.window)
     }

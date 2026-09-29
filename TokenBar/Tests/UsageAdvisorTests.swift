@@ -56,6 +56,51 @@ final class UsageAdvisorTests: XCTestCase {
         XCTAssertTrue(recommendation.message.contains("55%p"))
     }
 
+    func testDetectsResetThatHappensBeforeScheduledTime() throws {
+        let now = Date(timeIntervalSince1970: 10_000)
+        let scheduledReset = now.addingTimeInterval(2 * 60 * 60)
+        let previous = UsageSample(
+            snapshot: makeSnapshot(provider: .codex, used: 82, reset: scheduledReset),
+            capturedAt: now.addingTimeInterval(-60)
+        )
+        let current = UsageSample(
+            snapshot: makeSnapshot(
+                provider: .codex,
+                used: 3,
+                reset: now.addingTimeInterval(5 * 60 * 60)
+            ),
+            capturedAt: now
+        )
+
+        let event = try XCTUnwrap(
+            UsageAdvisor.recentUnexpectedResets(history: [previous, current], now: now).first
+        )
+
+        XCTAssertEqual(event.provider, .codex)
+        XCTAssertEqual(event.window, .short)
+        XCTAssertEqual(event.restoredPercentage, 79, accuracy: 0.001)
+    }
+
+    func testIgnoresResetAtScheduledTime() {
+        let now = Date(timeIntervalSince1970: 10_000)
+        let previous = UsageSample(
+            snapshot: makeSnapshot(provider: .claude, used: 90, reset: now),
+            capturedAt: now.addingTimeInterval(-60)
+        )
+        let current = UsageSample(
+            snapshot: makeSnapshot(
+                provider: .claude,
+                used: 0,
+                reset: now.addingTimeInterval(5 * 60 * 60)
+            ),
+            capturedAt: now
+        )
+
+        XCTAssertTrue(
+            UsageAdvisor.recentUnexpectedResets(history: [previous, current], now: now).isEmpty
+        )
+    }
+
     private func makeSnapshot(
         provider: UsageProviderID,
         used: Double,
