@@ -3,9 +3,19 @@ import Foundation
 struct ClaudeUsageProvider: UsageProvider {
     let id: UsageProviderID = .claude
     private let snapshotURL: URL
+    private let remoteUsageFetcher: @Sendable () async throws -> ClaudeRemoteUsage
+    private let now: @Sendable () -> Date
 
-    init(snapshotURL: URL = Self.defaultSnapshotURL) {
+    init(
+        snapshotURL: URL = Self.defaultSnapshotURL,
+        remoteUsageFetcher: @escaping @Sendable () async throws -> ClaudeRemoteUsage = {
+            try await ClaudeOAuthUsageClient().fetchUsage()
+        },
+        now: @escaping @Sendable () -> Date = { .now }
+    ) {
         self.snapshotURL = snapshotURL
+        self.remoteUsageFetcher = remoteUsageFetcher
+        self.now = now
     }
 
     static var defaultSnapshotURL: URL {
@@ -14,12 +24,30 @@ struct ClaudeUsageProvider: UsageProvider {
     }
 
     func fetchUsage() async throws -> UsageSnapshot {
-        guard FileManager.default.fileExists(atPath: snapshotURL.path) else {
-            throw UsageProviderError.unavailable(
-                "Claude 연결 스크립트를 설치한 뒤 Claude Code를 한 번 사용해 주세요."
-            )
-        }
+        let localSnapshot = try? fetchLocalSnapshot()
 
+        do {
+            let remote = try await remoteUsageFetcher()
+            return UsageSnapshot(
+                provider: .claude,
+                shortWindow: remote.shortWindow ?? localSnapshot?.shortWindow,
+                weeklyWindow: remote.weeklyWindow ?? localSnapshot?.weeklyWindow,
+                currentContextPercentage: localSnapshot?.currentContextPercentage,
+                currentSessionTokens: localSnapshot?.currentSessionTokens,
+                estimatedCostUSD: localSnapshot?.estimatedCostUSD,
+                updatedAt: now(),
+                sourceDescription: "Anthropic usage API"
+            )
+        } catch {
+            if let localSnapshot { return localSnapshot }
+            throw error
+        }
+    }
+
+    private func fetchLocalSnapshot() throws -> UsageSnapshot {
+        guard FileManager.default.fileExists(atPath: snapshotURL.path) else {
+            throw UsageProviderError.unavailable("Claude 로컬 사용량 파일을 찾을 수 없습니다.")
+        }
         let data: Data
         do {
             data = try Data(contentsOf: snapshotURL)

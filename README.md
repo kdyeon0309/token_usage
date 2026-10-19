@@ -21,15 +21,20 @@ open ~/Applications/TokenBar.app
 
 ## Claude Code 연결
 
-Claude Code가 공식 Status Line 입력으로 전달하는 5시간/주간 한도를 로컬 파일에
-저장합니다. 기존 Status Line 명령은 그대로 실행되며 설정 파일도 자동으로 백업됩니다.
+TokenBar는 Claude Code가 macOS 키체인에 저장한 로그인을 이용해 Anthropic 사용량
+서버에서 5시간/주간 한도를 직접 갱신합니다. 토큰은 메모리에서 요청에만 사용하며
+파일이나 로그에 저장하지 않습니다. Claude Code에 로그인되어 있으면 별도 연결 작업은
+필요하지 않습니다.
+
+현재 세션의 컨텍스트와 비용도 표시하려면 Status Line 연결 스크립트를 설치합니다.
+기존 Status Line 명령은 그대로 실행되며 설정 파일도 자동으로 백업됩니다.
 
 ```bash
 python3 scripts/install_claude_bridge.py
 ```
 
-또는 TokenBar 팝오버 아래의 **Claude 연결** 버튼을 누를 수 있습니다. 설치 후 Claude
-Code를 시작하거나 메시지를 한 번 보내면 TokenBar에 표시됩니다.
+또는 TokenBar 팝오버 아래의 **Claude 세션 연결** 버튼을 누를 수 있습니다. 설치 후
+Claude Code를 시작하면 현재 세션 정보가 TokenBar에 표시됩니다.
 
 ## Codex 연결
 

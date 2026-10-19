@@ -197,7 +197,7 @@ struct MenuBarContentView: View {
                         ProgressView()
                             .controlSize(.mini)
                     } else {
-                        Label("Claude 연결", systemImage: "link")
+                        Label("Claude 세션 연결", systemImage: "link")
                     }
                 }
                 .buttonStyle(.plain)

@@ -29,7 +29,12 @@ final class ClaudeUsageProviderTests: XCTestCase {
         try Data(json.utf8).write(to: fileURL)
         defer { try? FileManager.default.removeItem(at: fileURL) }
 
-        let snapshot = try await ClaudeUsageProvider(snapshotURL: fileURL).fetchUsage()
+        let snapshot = try await ClaudeUsageProvider(
+            snapshotURL: fileURL,
+            remoteUsageFetcher: {
+                throw UsageProviderError.unavailable("offline")
+            }
+        ).fetchUsage()
 
         XCTAssertEqual(snapshot.shortWindow?.remainingPercentage, 75)
         XCTAssertEqual(snapshot.weeklyWindow?.remainingPercentage, 40)
@@ -37,6 +42,47 @@ final class ClaudeUsageProviderTests: XCTestCase {
         XCTAssertEqual(snapshot.currentSessionTokens?.total, 200)
         XCTAssertEqual(snapshot.estimatedCostUSD, 1.25)
         XCTAssertEqual(snapshot.updatedAt, Date(timeIntervalSince1970: 1_700_000_000))
+    }
+
+    func testRemoteLimitsUpdateWithoutClaudeSession() async throws {
+        let fileURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString)
+            .appendingPathExtension("json")
+        let json = """
+        {
+          "captured_at": 1700000000,
+          "context_window": {"used_percentage": 42},
+          "rate_limits": null
+        }
+        """
+        try Data(json.utf8).write(to: fileURL)
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+
+        let refreshDate = Date(timeIntervalSince1970: 1_800_000_000)
+        let snapshot = try await ClaudeUsageProvider(
+            snapshotURL: fileURL,
+            remoteUsageFetcher: {
+                ClaudeRemoteUsage(
+                    shortWindow: UsageWindow(
+                        usedPercentage: 12,
+                        resetsAt: Date(timeIntervalSince1970: 1_800_003_600),
+                        durationMinutes: 300
+                    ),
+                    weeklyWindow: UsageWindow(
+                        usedPercentage: 29,
+                        resetsAt: Date(timeIntervalSince1970: 1_800_604_800),
+                        durationMinutes: 10_080
+                    )
+                )
+            },
+            now: { refreshDate }
+        ).fetchUsage()
+
+        XCTAssertEqual(snapshot.shortWindow?.remainingPercentage, 88)
+        XCTAssertEqual(snapshot.weeklyWindow?.remainingPercentage, 71)
+        XCTAssertEqual(snapshot.currentContextPercentage, 42)
+        XCTAssertEqual(snapshot.updatedAt, refreshDate)
+        XCTAssertEqual(snapshot.sourceDescription, "Anthropic usage API")
     }
 }
 
