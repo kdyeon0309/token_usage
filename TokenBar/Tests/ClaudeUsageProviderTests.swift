@@ -32,7 +32,19 @@ final class ClaudeUsageProviderTests: XCTestCase {
         let snapshot = try await ClaudeUsageProvider(
             snapshotURL: fileURL,
             remoteUsageFetcher: {
-                throw UsageProviderError.unavailable("offline")
+                ClaudeRemoteUsage(
+                    shortWindow: UsageWindow(
+                        usedPercentage: 25,
+                        resetsAt: Date(timeIntervalSince1970: 1_700_003_600),
+                        durationMinutes: 300
+                    ),
+                    weeklyWindow: UsageWindow(
+                        usedPercentage: 60,
+                        resetsAt: Date(timeIntervalSince1970: 1_700_604_800),
+                        durationMinutes: 10_080
+                    ),
+                    fetchedAt: Date(timeIntervalSince1970: 1_700_000_000)
+                )
             }
         ).fetchUsage()
 
@@ -72,10 +84,10 @@ final class ClaudeUsageProviderTests: XCTestCase {
                         usedPercentage: 29,
                         resetsAt: Date(timeIntervalSince1970: 1_800_604_800),
                         durationMinutes: 10_080
-                    )
+                    ),
+                    fetchedAt: refreshDate
                 )
-            },
-            now: { refreshDate }
+            }
         ).fetchUsage()
 
         XCTAssertEqual(snapshot.shortWindow?.remainingPercentage, 88)

@@ -1,21 +1,27 @@
 import Foundation
+import OSLog
 
 struct ClaudeUsageProvider: UsageProvider {
+    private static let logger = Logger(
+        subsystem: "com.kdyeon0309.TokenBar",
+        category: "ClaudeUsage"
+    )
+
     let id: UsageProviderID = .claude
     private let snapshotURL: URL
     private let remoteUsageFetcher: @Sendable () async throws -> ClaudeRemoteUsage
-    private let now: @Sendable () -> Date
 
     init(
         snapshotURL: URL = Self.defaultSnapshotURL,
-        remoteUsageFetcher: @escaping @Sendable () async throws -> ClaudeRemoteUsage = {
-            try await ClaudeOAuthUsageClient().fetchUsage()
-        },
-        now: @escaping @Sendable () -> Date = { .now }
+        remoteUsageFetcher: (@Sendable () async throws -> ClaudeRemoteUsage)? = nil
     ) {
         self.snapshotURL = snapshotURL
-        self.remoteUsageFetcher = remoteUsageFetcher
-        self.now = now
+        if let remoteUsageFetcher {
+            self.remoteUsageFetcher = remoteUsageFetcher
+        } else {
+            let client = ClaudeOAuthUsageClient()
+            self.remoteUsageFetcher = { try await client.fetchUsage() }
+        }
     }
 
     static var defaultSnapshotURL: URL {
@@ -28,6 +34,7 @@ struct ClaudeUsageProvider: UsageProvider {
 
         do {
             let remote = try await remoteUsageFetcher()
+            Self.logger.notice("Claude usage loaded successfully")
             return UsageSnapshot(
                 provider: .claude,
                 shortWindow: remote.shortWindow ?? localSnapshot?.shortWindow,
@@ -35,11 +42,11 @@ struct ClaudeUsageProvider: UsageProvider {
                 currentContextPercentage: localSnapshot?.currentContextPercentage,
                 currentSessionTokens: localSnapshot?.currentSessionTokens,
                 estimatedCostUSD: localSnapshot?.estimatedCostUSD,
-                updatedAt: now(),
+                updatedAt: remote.fetchedAt,
                 sourceDescription: "Anthropic usage API"
             )
         } catch {
-            if let localSnapshot { return localSnapshot }
+            Self.logger.error("Claude live usage failed: \(error.localizedDescription, privacy: .public)")
             throw error
         }
     }

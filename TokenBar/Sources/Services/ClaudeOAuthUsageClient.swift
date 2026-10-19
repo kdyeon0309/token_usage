@@ -1,16 +1,80 @@
 import Foundation
 
-struct ClaudeRemoteUsage: Sendable {
+struct ClaudeRemoteUsage: Codable, Sendable {
     let shortWindow: UsageWindow?
     let weeklyWindow: UsageWindow?
+    let fetchedAt: Date
+
+    init(
+        shortWindow: UsageWindow?,
+        weeklyWindow: UsageWindow?,
+        fetchedAt: Date = .now
+    ) {
+        self.shortWindow = shortWindow
+        self.weeklyWindow = weeklyWindow
+        self.fetchedAt = fetchedAt
+    }
 }
 
-struct ClaudeOAuthUsageClient: Sendable {
+actor ClaudeOAuthUsageClient {
     private let endpoint = URL(string: "https://api.anthropic.com/api/oauth/usage")!
+    private let minimumRefreshInterval: TimeInterval = 5 * 60
+    private let cacheURL: URL
+    private var lastUsage: ClaudeRemoteUsage?
+    private var lastAttemptAt: Date?
+
+    init(cacheURL: URL = ClaudeOAuthUsageClient.defaultCacheURL) {
+        self.cacheURL = cacheURL
+    }
+
+    static var defaultCacheURL: URL {
+        FileManager.default.homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/Application Support/TokenBar/claude-usage-cache.json")
+    }
 
     func fetchUsage() async throws -> ClaudeRemoteUsage {
-        let credentials = try await loadCredentials()
-        return try await requestUsage(accessToken: credentials.claudeAiOauth.accessToken)
+        let currentDate = Date()
+        if lastUsage == nil {
+            lastUsage = loadCachedUsage()
+        }
+        if let lastUsage,
+           currentDate.timeIntervalSince(lastUsage.fetchedAt) < minimumRefreshInterval {
+            return lastUsage
+        }
+        if let lastAttemptAt,
+           currentDate.timeIntervalSince(lastAttemptAt) < minimumRefreshInterval {
+            if let lastUsage { return lastUsage }
+            throw UsageProviderError.unavailable("Claude 사용량을 갱신하고 있습니다.")
+        }
+
+        lastAttemptAt = currentDate
+        do {
+            let credentials = try await loadCredentials()
+            let usage = try await requestUsage(
+                accessToken: credentials.claudeAiOauth.accessToken,
+                fetchedAt: currentDate
+            )
+            lastUsage = usage
+            saveCachedUsage(usage)
+            return usage
+        } catch {
+            if let lastUsage { return lastUsage }
+            throw error
+        }
+    }
+
+    private func loadCachedUsage() -> ClaudeRemoteUsage? {
+        guard let data = try? Data(contentsOf: cacheURL) else { return nil }
+        return try? JSONDecoder().decode(ClaudeRemoteUsage.self, from: data)
+    }
+
+    private func saveCachedUsage(_ usage: ClaudeRemoteUsage) {
+        guard let data = try? JSONEncoder().encode(usage) else { return }
+        try? FileManager.default.createDirectory(
+            at: cacheURL.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
+        try? data.write(to: cacheURL, options: .atomic)
     }
 
     private func loadCredentials() async throws -> ClaudeCredentials {
@@ -53,7 +117,7 @@ struct ClaudeOAuthUsageClient: Sendable {
         }
     }
 
-    private func requestUsage(accessToken: String) async throws -> ClaudeRemoteUsage {
+    private func requestUsage(accessToken: String, fetchedAt: Date) async throws -> ClaudeRemoteUsage {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "GET"
         request.timeoutInterval = 15
@@ -96,7 +160,8 @@ struct ClaudeOAuthUsageClient: Sendable {
 
         return ClaudeRemoteUsage(
             shortWindow: report.fiveHour?.usageWindow(durationMinutes: 5 * 60),
-            weeklyWindow: report.sevenDay?.usageWindow(durationMinutes: 7 * 24 * 60)
+            weeklyWindow: report.sevenDay?.usageWindow(durationMinutes: 7 * 24 * 60),
+            fetchedAt: fetchedAt
         )
     }
 }
