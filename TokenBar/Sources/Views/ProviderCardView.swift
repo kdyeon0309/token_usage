@@ -25,12 +25,6 @@ struct ProviderCardView: View {
                 if let window = snapshot.weeklyWindow {
                     UsageProgressRow(title: "주간", window: window)
                 }
-                if let message = limitAvailabilityMessage(snapshot) {
-                    Label(message, systemImage: "info.circle")
-                        .font(.caption2)
-                        .foregroundStyle(.orange)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
                 if let advice {
                     paceDetails(advice)
                 }
@@ -148,12 +142,6 @@ struct ProviderCardView: View {
                 return (snapshot == nil ? "연결 필요" : "갱신 실패", .red)
             }
             guard let snapshot else { return ("대기 중", .secondary) }
-            if snapshot.shortWindow == nil && snapshot.weeklyWindow == nil {
-                return ("한도 대기", .orange)
-            }
-            if snapshot.shortWindow == nil || snapshot.weeklyWindow == nil {
-                return ("일부 데이터", .orange)
-            }
             return snapshot.isStale() ? ("데이터 지연", .orange) : ("연결됨", .green)
         }()
 
@@ -176,7 +164,7 @@ struct ProviderCardView: View {
             Text(snapshot.sourceDescription)
                 .lineLimit(1)
             Spacer(minLength: 4)
-            Text(snapshot.updatedAt.formatted(date: .abbreviated, time: .shortened))
+            Text(snapshot.updatedAt.formatted(date: .omitted, time: .shortened))
                 .monospacedDigit()
             Text("수집")
         }
@@ -192,22 +180,6 @@ struct ProviderCardView: View {
         }
         .font(.caption)
         .foregroundStyle(.secondary)
-    }
-
-    private func limitAvailabilityMessage(_ snapshot: UsageSnapshot) -> String? {
-        switch (snapshot.shortWindow, snapshot.weeklyWindow) {
-        case (nil, nil):
-            if provider == .claude {
-                return "Claude Code에서 메시지를 보낸 뒤 첫 응답이 오면 한도가 갱신됩니다."
-            }
-            return "Codex가 현재 사용 한도 정보를 전달하지 않았습니다."
-        case (nil, _):
-            return "\(provider.displayName)가 현재 5시간 한도를 전달하지 않았습니다."
-        case (_, nil):
-            return "\(provider.displayName)가 현재 주간 한도를 전달하지 않았습니다."
-        case (.some, .some):
-            return nil
-        }
     }
 
     @ViewBuilder

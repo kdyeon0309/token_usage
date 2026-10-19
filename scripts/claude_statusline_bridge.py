@@ -7,7 +7,6 @@ import pathlib
 import subprocess
 import sys
 import tempfile
-import time
 
 
 APP_DIR = pathlib.Path.home() / "Library" / "Application Support" / "TokenBar"
@@ -15,46 +14,14 @@ SNAPSHOT_PATH = APP_DIR / "claude.json"
 CONFIG_PATH = APP_DIR / "claude_bridge_config.json"
 
 
-def read_previous_snapshot() -> dict:
-    try:
-        value = json.loads(SNAPSHOT_PATH.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return {}
-    return value if isinstance(value, dict) else {}
-
-
-def merge_rate_limits(data: dict, previous: dict, now: float) -> dict | None:
-    """Keep a known window while a new Claude session is waiting for its first reply."""
-    incoming = data.get("rate_limits")
-    incoming = incoming if isinstance(incoming, dict) else {}
-    old = previous.get("rate_limits")
-    old = old if isinstance(old, dict) else {}
-
-    merged = {}
-    for name in ("five_hour", "seven_day", "spend_limit"):
-        current_window = incoming.get(name)
-        if isinstance(current_window, dict):
-            merged[name] = current_window
-            continue
-
-        old_window = old.get(name)
-        reset_at = old_window.get("resets_at") if isinstance(old_window, dict) else None
-        if isinstance(reset_at, (int, float)) and reset_at > now:
-            merged[name] = old_window
-
-    return merged or None
-
-
 def write_snapshot(data: dict) -> None:
-    captured_at = time.time()
-    previous = read_previous_snapshot()
     snapshot = {
         "version": 1,
-        "captured_at": captured_at,
+        "captured_at": __import__("time").time(),
         "model": data.get("model"),
         "cost": data.get("cost"),
         "context_window": data.get("context_window"),
-        "rate_limits": merge_rate_limits(data, previous, captured_at),
+        "rate_limits": data.get("rate_limits"),
     }
     APP_DIR.mkdir(parents=True, exist_ok=True)
     fd, temp_path = tempfile.mkstemp(prefix="claude-", suffix=".json", dir=APP_DIR)
